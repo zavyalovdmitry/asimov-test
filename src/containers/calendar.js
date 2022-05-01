@@ -13,6 +13,7 @@ export default function CalendarContainer({
   setTimes,
   setActiveTime,
   setShowTimes,
+  setInfo,
 }) {
   const getTimes = (e) => {
     const data = bookings.filter((item) => item.date === formatDate(e));
@@ -30,6 +31,7 @@ export default function CalendarContainer({
     setActiveTime('');
     getTimes(e);
     setShowTimes(true);
+    setInfo('');
   };
 
   return (

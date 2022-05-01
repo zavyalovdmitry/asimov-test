@@ -10,6 +10,8 @@ export default function FormContainer({
   setActiveTime,
   setShowForm,
   setShowTimes,
+  setInfo,
+  setBookings,
 }) {
   const [clientName, setClientName] = useState('');
   const [clientEmail, setClientEmail] = useState('');
@@ -60,11 +62,16 @@ export default function FormContainer({
     (async () => {
       const rawResponse = await fetch(`${API}${API_BOOK}`, options);
 
-      const content = await rawResponse.json();
-
-      console.log(content);
+      // const content = await rawResponse.json();
+      setInfo(rawResponse.statusText);
+      // console.log(rawResponse);
 
       setActiveTime('');
+      setShowForm(false);
+
+      if (rawResponse.status === 200) {
+        setBookings([...bookings, newBooking]);
+      }
     })();
   };
 

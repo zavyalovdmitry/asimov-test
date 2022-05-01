@@ -4,6 +4,7 @@ import {
   CalendarContainer,
   FormContainer,
   HoursContainer,
+  InfoContainer,
 } from '../containers';
 import { API, API_BOOKINGS } from '../constants';
 
@@ -14,13 +15,14 @@ function Home() {
   const [bookings, setBookings] = useState([]);
   const [showTimes, setShowTimes] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [info, setInfo] = useState('');
 
   useEffect(() => {
     fetch(`${API}${API_BOOKINGS}`)
       .then((response) => response.json())
       .then((data) => {
         setBookings(data);
-        // console.log(data);
+        console.log(data);
         // dispatch(fetchVehiclesSuccess(vehicles));
       })
       .catch((error) => {
@@ -39,6 +41,7 @@ function Home() {
         setTimes={setTimes}
         setActiveTime={setActiveTime}
         setShowTimes={setShowTimes}
+        setInfo={setInfo}
       />
       {showTimes ? (
         <HoursContainer
@@ -57,8 +60,11 @@ function Home() {
           setActiveTime={setActiveTime}
           setShowForm={setShowForm}
           setShowTimes={setShowTimes}
+          setInfo={setInfo}
+          setBookings={setBookings}
         />
       ) : null}
+      {info ? <InfoContainer info={info} /> : null}
     </>
   );
 }
