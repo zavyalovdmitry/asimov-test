@@ -14,3 +14,4 @@ export const API = 'http://localhost:3100/api/';
 
 export const API_BOOKINGS = 'bookings';
 export const API_BOOK = 'book';
+export const API_UNBOOK = 'unbook';

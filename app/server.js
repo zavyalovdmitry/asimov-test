@@ -20,6 +20,51 @@ const getFile = (fileName) => {
   });
 };
 
+const putFile = (arr) => {
+  writeFile('./data.json', JSON.stringify(arr), 'utf8', (err, result) => {
+    if (err) {
+      console.log(err);
+      return;
+    }
+  });
+};
+
+app.get('/api/bookings/:code', (req, res) => {
+  const { code } = req.params;
+  getFile(DATA_FILE)
+    .then((data) => {
+      const bookings = JSON.parse(data);
+      const result = bookings.find((item) => item.changeCode === code);
+      // console.log(result);
+      if (result) {
+        res.json(result);
+      } else {
+        res.statusMessage = 'not found';
+        res.status(409).end();
+      }
+    })
+    .catch((err) => console.error(err));
+});
+
+app.get('/api/unbook/:code', (req, res) => {
+  const { code } = req.params;
+  getFile(DATA_FILE)
+    .then((data) => {
+      const bookings = JSON.parse(data);
+      const result = bookings.filter((item) => item.changeCode !== code);
+      // console.log(result);
+      // if (result) {
+      //   res.json(result);
+      // } else {
+      console.log(result);
+      putFile(result);
+      res.statusMessage = 'deleted';
+      res.status(200).end();
+      // }
+    })
+    .catch((err) => console.error(err));
+});
+
 app.get('/api/bookings', (req, res) => {
   getFile(DATA_FILE)
     .then((data) => {
@@ -50,13 +95,8 @@ app.post('/api/book', express.json({ type: '*/*' }), (req, res) => {
     const arr = [...bookings];
 
     arr.push(req.body);
-
-    writeFile('./data.json', JSON.stringify(arr), 'utf8', (err, result) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
-    });
+    console.log(arr);
+    putFile(arr);
 
     res.statusMessage = `Your appointment was scheduled to ${
       req.body.date

@@ -17,12 +17,6 @@ export default function FormContainer({
   const [clientName, setClientName] = useState('');
   const [clientEmail, setClientEmail] = useState('');
 
-  // const checkClient = () => {
-  //   // return bookings.find((item) => item.clientEmail === clientEmail);
-  //   console.log(clientEmail);
-  //   console.log(bookings.find((item) => item.clientEmail === clientEmail));
-  // };
-
   const validateEmail = (email) => {
     return String(email)
       .toLowerCase()
@@ -32,10 +26,6 @@ export default function FormContainer({
   };
 
   const submitHandle = () => {
-    // if (!clientName || !clientEmail || !time || !date) return;
-
-    // if (checkClient()) return;
-
     if (!validateEmail(clientEmail)) {
       alert('Please, enter valid email!');
       return;
@@ -68,9 +58,7 @@ export default function FormContainer({
     (async () => {
       const rawResponse = await fetch(`${API}${API_BOOK}`, options);
 
-      // const content = await rawResponse.json();
       setInfo(rawResponse.statusText);
-      // console.log(rawResponse);
 
       setActiveTime('');
       setShowForm(false);
@@ -78,7 +66,6 @@ export default function FormContainer({
       if (rawResponse.status === 200) {
         checkFullDates([...bookings, newBooking]);
         setBookings([...bookings, newBooking]);
-        // checkFullDates
       }
     })();
   };

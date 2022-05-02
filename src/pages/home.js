@@ -4,6 +4,7 @@ import {
   HeaderContainer,
   CalendarContainer,
   FormContainer,
+  FormModifyContainer,
   HoursContainer,
   InfoContainer,
 } from '../containers';
@@ -19,20 +20,15 @@ function Home() {
   const [info, setInfo] = useState('');
   const [disabledDates, setDisabledDates] = useState([]);
 
-  // let disabledDates = ['2022-05-04'];
-
   useEffect(() => {
     fetch(`${API}${API_BOOKINGS}`)
       .then((response) => response.json())
       .then((data) => {
         setBookings(data);
-        // console.log(data);
-        // dispatch(fetchVehiclesSuccess(vehicles));
         checkFullDates(data);
       })
       .catch((error) => {
         console.log(error);
-        // dispatch(fetchVehiclesFailure(error.message));
       });
   }, []);
 
@@ -47,12 +43,12 @@ function Home() {
     );
 
     setDisabledDates([...arr3]);
-    // console.log(disabledDates);
   };
 
   return (
     <>
       <HeaderContainer />
+      {/* <p>Still don't have a booking? book now</p> */}
       <CalendarContainer
         bookings={bookings}
         date={date}
@@ -88,6 +84,7 @@ function Home() {
         />
       ) : null}
       {info ? <InfoContainer info={info} /> : null}
+      <FormModifyContainer />
     </>
   );
 }

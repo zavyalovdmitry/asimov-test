@@ -21,8 +21,6 @@ export const GlobalStyles = createGlobalStyle`
 
   html {
     background-image: linear-gradient(to right, rgba(255,255,255, 0.8) 0 100%), url(img/pic.jpg);
-
-    // background: url(img/pic.jpg) no-repeat center center fixed; 
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -31,25 +29,13 @@ export const GlobalStyles = createGlobalStyle`
 
   html, body {
     height: 100%;
-    // display: flex;
-    // justify-content: center;
-    // align-items: center;
-    // text-transform: none;
-    // user-select: none;
-    // padding: 0;
-    // background-color: #fcfcfc;
   }
 
   #root {
     height: 100%;
     display: flex;
     flex-direction: column;
-    // justify-content: center;
     align-items: center;
     margin-top: 100px;
-    // width: 100%;
-    // display: flex;
-    // flex-direction: column;
-    // align-items: center;
   }
 `;

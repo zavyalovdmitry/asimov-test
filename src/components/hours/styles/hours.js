@@ -13,9 +13,8 @@ export const Item = styled.p`
   margin: 10px 0 0 0;
   padding: 5px;
   border: 1px solid #a0a096;
-  // border-radius: 5px;
+  border-radius: 5px;
   background: white;
-
   font-family: Hahmlet, Helvetica, sans-serif;
   line-height: 1.25em;
   cursor: pointer;
