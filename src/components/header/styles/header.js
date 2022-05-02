@@ -4,26 +4,20 @@ export const Container = styled.div`
   width: 350px;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: center;
 `;
 
-export const Text = styled.p`
-  width: 100%;
+export const Caption = styled.h1`
+  // width: 170px;
   text-align: center;
-  margin: 10px 0 0 0;
-  padding: 15px;
-  border: 1px solid #a0a096;
+  margin: 10px;
+  padding: 5px;
+  // border: 1px solid #a0a096;
   // border-radius: 5px;
-  background: white;
-  word-break: unset;
-  word-wrap: unset;
-  overflow-wrap: unset;
-  -webkit-hyphens: unset;
-  -moz-hyphens: unset;
-  -ms-hyphens: unset;
-  hyphens: unset;
+  // background: white;
 
-  font-family: Hahmlet, Helvetica, sans-serif;
+  font-family: PaintDrops, Helvetica, sans-serif;
+  font-size: 2.5rem;
   line-height: 1.125em;
   // cursor: pointer;
 

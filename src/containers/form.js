@@ -12,13 +12,16 @@ export default function FormContainer({
   setShowTimes,
   setInfo,
   setBookings,
+  checkFullDates,
 }) {
   const [clientName, setClientName] = useState('');
   const [clientEmail, setClientEmail] = useState('');
 
-  const checkClient = () => {
-    return bookings.find((item) => item.clientEmail === clientEmail);
-  };
+  // const checkClient = () => {
+  //   // return bookings.find((item) => item.clientEmail === clientEmail);
+  //   console.log(clientEmail);
+  //   console.log(bookings.find((item) => item.clientEmail === clientEmail));
+  // };
 
   const validateEmail = (email) => {
     return String(email)
@@ -29,11 +32,14 @@ export default function FormContainer({
   };
 
   const submitHandle = () => {
-    if (!clientName || !clientEmail || !time || !date) return;
+    // if (!clientName || !clientEmail || !time || !date) return;
 
-    if (checkClient()) return;
+    // if (checkClient()) return;
 
-    if (!validateEmail(clientEmail)) return;
+    if (!validateEmail(clientEmail)) {
+      alert('Please, enter valid email!');
+      return;
+    }
 
     const id = makeCode(9);
     const bookDate = formatDate(date);
@@ -70,7 +76,9 @@ export default function FormContainer({
       setShowForm(false);
 
       if (rawResponse.status === 200) {
+        checkFullDates([...bookings, newBooking]);
         setBookings([...bookings, newBooking]);
+        // checkFullDates
       }
     })();
   };
@@ -87,7 +95,12 @@ export default function FormContainer({
         type="email"
         onChange={(e) => setClientEmail(e.target.value)}
       />
-      <Form.Button onClick={() => submitHandle()}>Book</Form.Button>
+      <Form.Button
+        onClick={() => submitHandle()}
+        disabled={!(clientName && clientEmail && time && date)}
+      >
+        Book
+      </Form.Button>
       <Form.Button
         onClick={() => {
           setShowForm(false);

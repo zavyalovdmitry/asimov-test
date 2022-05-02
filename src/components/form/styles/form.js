@@ -15,8 +15,8 @@ export const Input = styled.input`
   border: 1px solid #a0a096;
   // border-radius: 5px;
 
-  font-family: Arial, Helvetica, sans-serif;
-  line-height: 1.125em;
+  font-family: Hahmlet, Helvetica, sans-serif;
+  line-height: 1.25em;
   // cursor: pointer;
 
   &:hover,
@@ -33,8 +33,8 @@ export const Button = styled.button`
   // border: 1px solid #a0a096;
   // border-radius: 5px;
 
-  font-family: Arial, Helvetica, sans-serif;
-  line-height: 1.125em;
+  font-family: Hahmlet, Helvetica, sans-serif;
+  line-height: 1.25em;
   // cursor: pointer;
 
   // &:hover,

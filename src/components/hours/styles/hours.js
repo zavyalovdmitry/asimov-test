@@ -16,8 +16,8 @@ export const Item = styled.p`
   // border-radius: 5px;
   background: white;
 
-  font-family: Arial, Helvetica, sans-serif;
-  line-height: 1.125em;
+  font-family: Hahmlet, Helvetica, sans-serif;
+  line-height: 1.25em;
   cursor: pointer;
 
   &:hover {

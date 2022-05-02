@@ -1,6 +1,20 @@
 import { createGlobalStyle } from 'styled-components';
 
 export const GlobalStyles = createGlobalStyle`
+  @font-face {
+    font-family: 'Hahmlet';
+    font-style: normal;
+    font-weight: 200;
+    src: url('../fonts/Hahmlet.ttf');
+  }
+
+  @font-face {
+    font-family: 'PaintDrops';
+    font-style: normal;
+    font-weight: 200;
+    src: url('../fonts/PaintDropsRegular.ttf');
+  }
+
   * {
     box-sizing: border-box;
   }
