@@ -19,7 +19,7 @@ export default function FormModifyContainer({
       alert('Please, enter valid 7-digits code');
       return;
     }
-
+    setMessage('Please wait...');
     fetch(`${API}${API_BOOKINGS}/${clientCode}`)
       .then((response) => {
         if (response.status === 409) {

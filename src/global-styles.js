@@ -20,7 +20,7 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   html {
-    background-image: linear-gradient(to right, rgba(255,255,255, 0.8) 0 100%), url(img/pic.jpg);
+    background-image: linear-gradient(to right, rgba(255,255,255, 0.9) 0 100%), url(img/pic.jpg);
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;

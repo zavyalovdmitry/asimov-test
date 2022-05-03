@@ -6,7 +6,9 @@ import {
   FormContainer,
   FormModifyContainer,
   HoursContainer,
+  InfoContainer,
 } from '../containers';
+
 import { TIMES_INIT, API, API_BOOKINGS, BLANK_DATA } from '../constants';
 
 function Home() {
@@ -49,53 +51,59 @@ function Home() {
   return (
     <>
       <HeaderContainer />
-      <CalendarContainer
-        bookings={bookings}
-        date={date}
-        setDate={setDate}
-        setTimes={setTimes}
-        setActiveTime={setActiveTime}
-        setShowTimes={setShowTimes}
-        disabledDates={disabledDates}
-        setShowForm={setShowForm}
-        formMessage={formMessage}
-        setFormMessage={setFormMessage}
-        mode={mode}
-        setMode={setMode}
-      />
-      {showTimes ? (
-        <HoursContainer
-          times={times}
-          activeTime={activeTime}
-          setActiveTime={setActiveTime}
-          setShowForm={setShowForm}
-          setShowTimes={setShowTimes}
-          setFormMessage={setFormMessage}
-          mode={mode}
-        />
-      ) : null}
-      {showForm ? (
-        <FormContainer
-          date={date}
-          time={activeTime}
-          bookings={bookings}
-          setActiveTime={setActiveTime}
-          setShowForm={setShowForm}
-          setShowTimes={setShowTimes}
-          setBookings={setBookings}
-          checkFullDates={checkFullDates}
-          currentBooking={currentBooking}
-          mode={mode}
-          setFormMessage={setFormMessage}
-        />
-      ) : null}
-      {mode === '' ? (
-        <FormModifyContainer
-          setCurrentBooking={setCurrentBooking}
-          setMode={setMode}
-          setFormMessage={setFormMessage}
-        />
-      ) : null}
+      {bookings.length ? (
+        <>
+          <CalendarContainer
+            bookings={bookings}
+            date={date}
+            setDate={setDate}
+            setTimes={setTimes}
+            setActiveTime={setActiveTime}
+            setShowTimes={setShowTimes}
+            disabledDates={disabledDates}
+            setShowForm={setShowForm}
+            formMessage={formMessage}
+            setFormMessage={setFormMessage}
+            mode={mode}
+            setMode={setMode}
+          />
+          {showTimes ? (
+            <HoursContainer
+              times={times}
+              activeTime={activeTime}
+              setActiveTime={setActiveTime}
+              setShowForm={setShowForm}
+              setShowTimes={setShowTimes}
+              setFormMessage={setFormMessage}
+              mode={mode}
+            />
+          ) : null}
+          {showForm ? (
+            <FormContainer
+              date={date}
+              time={activeTime}
+              bookings={bookings}
+              setActiveTime={setActiveTime}
+              setShowForm={setShowForm}
+              setShowTimes={setShowTimes}
+              setBookings={setBookings}
+              checkFullDates={checkFullDates}
+              currentBooking={currentBooking}
+              mode={mode}
+              setFormMessage={setFormMessage}
+            />
+          ) : null}
+          {mode === '' ? (
+            <FormModifyContainer
+              setCurrentBooking={setCurrentBooking}
+              setMode={setMode}
+              setFormMessage={setFormMessage}
+            />
+          ) : null}
+        </>
+      ) : (
+        <InfoContainer info={'Loading data...'} />
+      )}
     </>
   );
 }

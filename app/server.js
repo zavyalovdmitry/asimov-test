@@ -170,6 +170,9 @@ app.post('/api/book', express.json({ type: '*/*' }), (req, res) => {
         }
       }
       getBooking();
+    } else {
+      res.statusMessage = 'updated';
+      res.status(200).end();
     }
   }
   update();

@@ -53,6 +53,9 @@ export default function FormContainer({
       body: JSON.stringify(newBooking),
     };
 
+    setShowForm(false);
+    setFormMessage('Saving data...');
+
     (async () => {
       const rawResponse = await fetch(`${API}${API_BOOK}`, options);
 
@@ -74,7 +77,6 @@ export default function FormContainer({
       }
 
       setActiveTime('');
-      setShowForm(false);
 
       if (rawResponse.status === 200) {
         checkFullDates([...bookings, newBooking]);
