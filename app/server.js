@@ -35,7 +35,7 @@ app.get('/api/bookings/:code', (req, res) => {
     .then((data) => {
       const bookings = JSON.parse(data);
       const result = bookings.find((item) => item.changeCode === code);
-      // console.log(result);
+
       if (result) {
         res.json(result);
       } else {
@@ -46,21 +46,32 @@ app.get('/api/bookings/:code', (req, res) => {
     .catch((err) => console.error(err));
 });
 
+// app.get('/api/change/:code', (req, res) => {
+//   const { code } = req.params;
+//   getFile(DATA_FILE)
+//     .then((data) => {
+//       const bookings = JSON.parse(data);
+//       const result = bookings.filter((item) => item.changeCode !== code);
+
+//       console.log(result);
+//       putFile(result);
+//       res.statusMessage = 'deleted';
+//       res.status(200).end();
+//     })
+//     .catch((err) => console.error(err));
+// });
+
 app.get('/api/unbook/:code', (req, res) => {
   const { code } = req.params;
   getFile(DATA_FILE)
     .then((data) => {
       const bookings = JSON.parse(data);
       const result = bookings.filter((item) => item.changeCode !== code);
-      // console.log(result);
-      // if (result) {
-      //   res.json(result);
-      // } else {
+
       console.log(result);
       putFile(result);
       res.statusMessage = 'deleted';
       res.status(200).end();
-      // }
     })
     .catch((err) => console.error(err));
 });
@@ -71,7 +82,36 @@ app.get('/api/bookings', (req, res) => {
       const bookings = JSON.parse(data);
       res.json(
         bookings.map((item) => {
-          const obj = { id: item.id, date: item.date, time: item.time };
+          const obj = { date: item.date, time: item.time };
+          return obj;
+        })
+      );
+    })
+    .catch((err) => console.error(err));
+});
+
+// app.get('/api/rebook/:code', (req, res) => {
+//   const { code } = req.params;
+//   getFile(DATA_FILE)
+//     .then((data) => {
+//       const bookings = JSON.parse(data);
+//       const result = bookings.filter((item) => item.changeCode !== code);
+
+//       console.log(result);
+//       putFile(result);
+//       res.statusMessage = 'deleted';
+//       res.status(200).end();
+//     })
+//     .catch((err) => console.error(err));
+// });
+
+app.get('/api/bookings', (req, res) => {
+  getFile(DATA_FILE)
+    .then((data) => {
+      const bookings = JSON.parse(data);
+      res.json(
+        bookings.map((item) => {
+          const obj = { date: item.date, time: item.time };
           return obj;
         })
       );
@@ -82,19 +122,34 @@ app.get('/api/bookings', (req, res) => {
 app.post('/api/book', express.json({ type: '*/*' }), (req, res) => {
   getFile(DATA_FILE).then((data) => {
     const bookings = JSON.parse(data);
+    // const change = bookings.find((item) => item.changeCode === req.body.changeCode);
 
-    if (bookings.find((item) => item.clientEmail === req.body.clientEmail)) {
-      // console.log('nope');
-      // res.end('nope');
+    if (
+      bookings.find((item) => item.clientEmail === req.body.clientEmail) &&
+      !bookings.find((item) => item.changeCode === req.body.changeCode)
+    ) {
       res.statusMessage =
         'You already have a scheduled appointment, more would be too much.';
       res.status(409).end();
 
       return;
     }
-    const arr = [...bookings];
+    let arr = [];
 
-    arr.push(req.body);
+    if (bookings.find((item) => item.changeCode === req.body.changeCode)) {
+      arr = bookings.map((item) => {
+        if (item.changeCode === req.body.changeCode) {
+          return { ...item, date: req.body.date, time: req.body.time };
+        } else {
+          return item;
+        }
+      });
+      console.log('changed');
+    } else {
+      arr = [...bookings];
+      arr.push(req.body);
+    }
+
     console.log(arr);
     putFile(arr);
 

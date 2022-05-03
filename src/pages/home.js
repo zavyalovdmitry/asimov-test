@@ -19,6 +19,15 @@ function Home() {
   const [showForm, setShowForm] = useState(false);
   const [info, setInfo] = useState('');
   const [disabledDates, setDisabledDates] = useState([]);
+  const [mode, setMode] = useState('');
+  const [currentBooking, setCurrentBooking] = useState({
+    date: '',
+    time: '',
+    changeCode: '',
+    clientName: '',
+    clientEmail: '',
+  });
+  const [formMessage, setFormMessage] = useState('');
 
   useEffect(() => {
     fetch(`${API}${API_BOOKINGS}`)
@@ -60,6 +69,10 @@ function Home() {
         setInfo={setInfo}
         disabledDates={disabledDates}
         setShowForm={setShowForm}
+        formMessage={formMessage}
+        setFormMessage={setFormMessage}
+        mode={mode}
+        setMode={setMode}
       />
       {showTimes ? (
         <HoursContainer
@@ -68,6 +81,8 @@ function Home() {
           setActiveTime={setActiveTime}
           setShowForm={setShowForm}
           setShowTimes={setShowTimes}
+          setFormMessage={setFormMessage}
+          mode={mode}
         />
       ) : null}
       {showForm ? (
@@ -81,10 +96,23 @@ function Home() {
           setInfo={setInfo}
           setBookings={setBookings}
           checkFullDates={checkFullDates}
+          currentBooking={currentBooking}
+          setCurrentBooking={setCurrentBooking}
+          mode={mode}
+          setFormMessage={setFormMessage}
+          formMessage={formMessage}
         />
       ) : null}
-      {info ? <InfoContainer info={info} /> : null}
-      <FormModifyContainer />
+      {/* {info ? <InfoContainer info={info} /> : null} */}
+      {mode === '' ? (
+        <FormModifyContainer
+          currentBooking={currentBooking}
+          setCurrentBooking={setCurrentBooking}
+          mode={mode}
+          setMode={setMode}
+          setFormMessage={setFormMessage}
+        />
+      ) : null}
     </>
   );
 }

@@ -13,6 +13,7 @@ export const Text = styled.p`
   margin: 10px 0 0 0;
   padding: 15px;
   border: 1px solid #a0a096;
+  border-radius: 5px;
   background: white;
   word-break: unset;
   word-wrap: unset;

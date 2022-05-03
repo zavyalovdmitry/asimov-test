@@ -1,11 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form } from '../components';
 import { API, API_BOOKINGS, API_UNBOOK } from '../constants';
 
-export default function FormModifyContainer() {
+export default function FormModifyContainer({
+  currentBooking,
+  setCurrentBooking,
+  mode,
+  setMode,
+  setFormMessage,
+}) {
   const [clientCode, setClientCode] = useState('');
-  const [currentBooking, setCurrentBooking] = useState({});
+  // const [currentBooking, setCurrentBooking] = useState({});
   const [bookingFound, setBookingFound] = useState(false);
+  const [message, setMessage] = useState(
+    'Already have a booking? Use your code to make any changes to it:'
+  );
 
   const searchHandle = () => {
     if (clientCode.length !== 7) {
@@ -22,12 +31,16 @@ export default function FormModifyContainer() {
         return response.json();
       })
       .then((data) => {
-        // console.log(data);
+        console.log(data);
         if (data) {
           setCurrentBooking(data);
           setBookingFound(true);
+          setMessage('You can change date/time of your booking or unbook it.');
         } else {
           console.log('not found');
+          setMessage(
+            'Booking not found. Please, check if your code is correct.'
+          );
         }
       })
       .catch((error) => {
@@ -35,25 +48,45 @@ export default function FormModifyContainer() {
       });
   };
 
+  useEffect(() => {
+    if (!bookingFound) {
+      setClientCode('');
+    }
+  }, [bookingFound]);
+
   const unbookHandle = () => {
     if (window.confirm('Are you sure you want to unbook your dance?')) {
-      fetch(`${API}${API_UNBOOK}/${clientCode}`)
-        .then((response) => {
-          if (response.status === 409) {
-            // console.log('nope');
-            return;
-          }
-          return response.json();
-        })
-        .then((data) => {
-          // console.log(data);
-          // setCurrentBooking(data);
-          setBookingFound(true);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      fetch(`${API}${API_UNBOOK}/${clientCode}`).then((response) => {
+        if (response.status === 409) {
+          // console.log('nope');
+          return;
+        }
+        setBookingFound(false);
+        setMode('add');
+        setCurrentBooking({
+          date: '',
+          time: '',
+          changeCode: '',
+          clientName: '',
+          clientEmail: '',
+        }); // return response.json();
+      });
+      // .then((data) => {
+      // console.log(data);
+      // setCurrentBooking(data);
+
+      alert('You have succesfully unbook your dance.');
+      // setMessage('You have succesfully unbook your dance.');
+      // })
+      // .catch((error) => {
+      //   console.log(error);
+      // });
     }
+  };
+
+  const changeHandle = () => {
+    setMode('change');
+    setFormMessage('Choose a new date for your dance.');
   };
 
   return (
@@ -65,7 +98,7 @@ export default function FormModifyContainer() {
           fontFamily: 'Hahmlet, Helvetica, sans-serif',
         }}
       >
-        Already have a booking? Use your code to make any changes to it:
+        {message}
       </p>
       <Form.Input
         placeholder="your code"
@@ -81,7 +114,11 @@ export default function FormModifyContainer() {
       </Form.Button>
       {bookingFound ? (
         <>
-          <Form.Button onClick={() => searchHandle()} disabled={!clientCode}>
+          <Form.Button
+            onClick={() => changeHandle()}
+            disabled={!clientCode}
+            // disabled
+          >
             Change
           </Form.Button>
           <Form.Button onClick={() => unbookHandle()} disabled={!clientCode}>

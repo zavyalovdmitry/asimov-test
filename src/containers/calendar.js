@@ -17,6 +17,10 @@ export default function CalendarContainer({
   setInfo,
   disabledDates,
   setShowForm,
+  setFormMessage,
+  formMessage,
+  mode,
+  setMode,
 }) {
   const getTimes = (e) => {
     const data = bookings.filter((item) => item.date === formatDate(e));
@@ -36,6 +40,8 @@ export default function CalendarContainer({
     setShowTimes(true);
     setInfo('');
     setShowForm(false);
+    setFormMessage(mode === 'add' ? 'Pick an hour' : 'Pick a new hour');
+    setMode(mode === '' ? 'add' : mode);
   };
 
   function isSameDay(a, b) {
@@ -51,11 +57,22 @@ export default function CalendarContainer({
   }
 
   return (
-    <Calendar
-      onChange={(e) => calClickHandler(e)}
-      value={date}
-      minDate={new Date()}
-      tileDisabled={tileDisabled}
-    />
+    <>
+      <Calendar
+        onChange={(e) => calClickHandler(e)}
+        value={date}
+        minDate={new Date()}
+        tileDisabled={tileDisabled}
+      />
+      <p
+        style={{
+          width: '350px',
+          color: '#757575',
+          fontFamily: 'Hahmlet, Helvetica, sans-serif',
+        }}
+      >
+        {formMessage}
+      </p>
+    </>
   );
 }

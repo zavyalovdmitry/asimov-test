@@ -7,6 +7,8 @@ export default function HoursContainer({
   setActiveTime,
   setShowForm,
   setShowTimes,
+  setFormMessage,
+  mode,
 }) {
   return (
     <Hours>
@@ -18,6 +20,11 @@ export default function HoursContainer({
             setActiveTime(item);
             setShowForm(true);
             setShowTimes(false);
+            setFormMessage(
+              mode === 'add'
+                ? 'Enter your details and press Book'
+                : 'Press Change to finish changing your booking'
+            );
           }}
         >
           {item}

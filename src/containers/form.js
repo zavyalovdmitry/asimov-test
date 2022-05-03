@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form } from '../components';
 import { formatDate, makeCode } from '../utils';
 import { API, API_BOOK } from '../constants';
@@ -13,6 +13,10 @@ export default function FormContainer({
   setInfo,
   setBookings,
   checkFullDates,
+  currentBooking,
+  formMessage,
+  setFormMessage,
+  mode,
 }) {
   const [clientName, setClientName] = useState('');
   const [clientEmail, setClientEmail] = useState('');
@@ -31,12 +35,12 @@ export default function FormContainer({
       return;
     }
 
-    const id = makeCode(9);
+    // const id = makeCode(9);
     const bookDate = formatDate(date);
-    const changeCode = makeCode(7);
+    const changeCode = mode === 'add' ? makeCode(7) : currentBooking.changeCode;
 
     const newBooking = {
-      id,
+      // id,
       date: bookDate,
       time,
       changeCode,
@@ -59,6 +63,7 @@ export default function FormContainer({
       const rawResponse = await fetch(`${API}${API_BOOK}`, options);
 
       setInfo(rawResponse.statusText);
+      setFormMessage(rawResponse.statusText);
 
       setActiveTime('');
       setShowForm(false);
@@ -70,23 +75,34 @@ export default function FormContainer({
     })();
   };
 
+  useEffect(() => {
+    if (mode === 'change') {
+      setClientName(currentBooking.clientName);
+      setClientEmail(currentBooking.clientEmail);
+    }
+  }, []);
+
   return (
     <Form>
       <Form.Input
         placeholder="your name"
         type="text"
         onChange={(e) => setClientName(e.target.value)}
+        disabled={mode === 'change'}
+        value={currentBooking.clientName}
       />
       <Form.Input
         placeholder="your email"
         type="email"
         onChange={(e) => setClientEmail(e.target.value)}
+        disabled={mode === 'change'}
+        value={currentBooking.clientEmail}
       />
       <Form.Button
         onClick={() => submitHandle()}
         disabled={!(clientName && clientEmail && time && date)}
       >
-        Book
+        {mode === 'add' ? 'Book' : 'Change'}
       </Form.Button>
       <Form.Button
         onClick={() => {
