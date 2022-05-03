@@ -1,11 +1,12 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-dotenv.config({ path: '../.env' });
+dotenv.config({ path: './.env' });
 const app = express();
 
 const { MongoClient } = require('mongodb');
 const uri = process.env.API_KEY;
+const PORT = process.env.PORT || 8081;
 
 app.use(cors());
 
@@ -178,10 +179,10 @@ app.post('/api/book', express.json({ type: '*/*' }), (req, res) => {
   update();
 });
 
-app.listen(3100, () => {
-  console.log('server is on 3100');
-});
-
 app.all('*', (req, res) => {
   res.status(404).send('not found');
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}.`);
 });

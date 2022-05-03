@@ -10,7 +10,8 @@ export const TIMES_INIT = [
   '17:00 - 18:00',
 ];
 
-export const API = 'http://localhost:3100/api/';
+// export const API = 'http://localhost:3100/api/';
+export const API = 'https://zavyalovdmitry-for-asimov.herokuapp.com/';
 
 export const API_BOOKINGS = 'bookings';
 export const API_BOOK = 'book';
