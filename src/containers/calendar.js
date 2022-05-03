@@ -4,6 +4,7 @@
 import React, { useEffect } from 'react';
 import Calendar from 'react-calendar';
 import { differenceInCalendarDays } from 'date-fns';
+import { InfoContainer } from './';
 import { formatDate } from '../utils';
 import { TIMES_INIT } from '../constants';
 
@@ -14,7 +15,6 @@ export default function CalendarContainer({
   setTimes,
   setActiveTime,
   setShowTimes,
-  setInfo,
   disabledDates,
   setShowForm,
   setFormMessage,
@@ -38,9 +38,8 @@ export default function CalendarContainer({
     setActiveTime('');
     getTimes(e);
     setShowTimes(true);
-    setInfo('');
     setShowForm(false);
-    setFormMessage(mode === 'add' ? 'Pick an hour' : 'Pick a new hour');
+    setFormMessage(mode === 'change' ? 'Pick a new hour' : 'Pick an hour');
     setMode(mode === '' ? 'add' : mode);
   };
 
@@ -64,15 +63,7 @@ export default function CalendarContainer({
         minDate={new Date()}
         tileDisabled={tileDisabled}
       />
-      <p
-        style={{
-          width: '350px',
-          color: '#757575',
-          fontFamily: 'Hahmlet, Helvetica, sans-serif',
-        }}
-      >
-        {formMessage}
-      </p>
+      <InfoContainer info={formMessage} />
     </>
   );
 }

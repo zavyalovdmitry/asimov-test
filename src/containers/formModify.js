@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Form } from '../components';
+import { InfoContainer } from './';
 import { API, API_BOOKINGS, API_UNBOOK } from '../constants';
 
 export default function FormModifyContainer({
-  currentBooking,
   setCurrentBooking,
-  mode,
   setMode,
   setFormMessage,
 }) {
   const [clientCode, setClientCode] = useState('');
-  // const [currentBooking, setCurrentBooking] = useState({});
   const [bookingFound, setBookingFound] = useState(false);
   const [message, setMessage] = useState(
-    'Already have a booking? Use your code to make any changes to it:'
+    'Already have a booking? Use your code to make any changes to it.'
   );
 
   const searchHandle = () => {
@@ -25,7 +23,6 @@ export default function FormModifyContainer({
     fetch(`${API}${API_BOOKINGS}/${clientCode}`)
       .then((response) => {
         if (response.status === 409) {
-          // console.log('nope');
           return;
         }
         return response.json();
@@ -58,7 +55,6 @@ export default function FormModifyContainer({
     if (window.confirm('Are you sure you want to unbook your dance?')) {
       fetch(`${API}${API_UNBOOK}/${clientCode}`).then((response) => {
         if (response.status === 409) {
-          // console.log('nope');
           return;
         }
         setBookingFound(false);
@@ -69,18 +65,10 @@ export default function FormModifyContainer({
           changeCode: '',
           clientName: '',
           clientEmail: '',
-        }); // return response.json();
+        });
       });
-      // .then((data) => {
-      // console.log(data);
-      // setCurrentBooking(data);
 
-      alert('You have succesfully unbook your dance.');
-      // setMessage('You have succesfully unbook your dance.');
-      // })
-      // .catch((error) => {
-      //   console.log(error);
-      // });
+      alert('You have succesfully unbooked your dance.');
     }
   };
 
@@ -92,14 +80,7 @@ export default function FormModifyContainer({
   return (
     <Form>
       <hr width="350" size="1" color="#a0a096" style={{ marginTop: '20px' }} />
-      <p
-        style={{
-          color: '#757575',
-          fontFamily: 'Hahmlet, Helvetica, sans-serif',
-        }}
-      >
-        {message}
-      </p>
+      <InfoContainer info={message} />
       <Form.Input
         placeholder="your code"
         type="text"
@@ -114,11 +95,7 @@ export default function FormModifyContainer({
       </Form.Button>
       {bookingFound ? (
         <>
-          <Form.Button
-            onClick={() => changeHandle()}
-            disabled={!clientCode}
-            // disabled
-          >
+          <Form.Button onClick={() => changeHandle()} disabled={!clientCode}>
             Change
           </Form.Button>
           <Form.Button onClick={() => unbookHandle()} disabled={!clientCode}>

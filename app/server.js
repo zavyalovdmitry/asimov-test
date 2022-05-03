@@ -1,168 +1,178 @@
 const express = require('express');
-const { readFile, writeFile } = require('fs');
 const cors = require('cors');
+const dotenv = require('dotenv');
+dotenv.config({ path: '../.env' });
 const app = express();
 
+const { MongoClient } = require('mongodb');
+const uri = process.env.API_KEY;
+
 app.use(cors());
-app.use(express.json());
-
-const DATA_FILE = './data.json';
-
-const getFile = (fileName) => {
-  return new Promise((resolve, reject) => {
-    readFile(fileName, 'utf8', (err, data) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-      resolve(data);
-    });
-  });
-};
-
-const putFile = (arr) => {
-  writeFile('./data.json', JSON.stringify(arr), 'utf8', (err, result) => {
-    if (err) {
-      console.log(err);
-      return;
-    }
-  });
-};
 
 app.get('/api/bookings/:code', (req, res) => {
   const { code } = req.params;
-  getFile(DATA_FILE)
-    .then((data) => {
-      const bookings = JSON.parse(data);
-      const result = bookings.find((item) => item.changeCode === code);
 
-      if (result) {
-        res.json(result);
-      } else {
-        res.statusMessage = 'not found';
-        res.status(409).end();
-      }
-    })
-    .catch((err) => console.error(err));
+  async function getBooking() {
+    const client = new MongoClient(uri);
+
+    try {
+      await client.connect();
+      await getByCode(client);
+    } finally {
+      await client.close();
+    }
+  }
+
+  async function getByCode(client) {
+    const result = await client
+      .db('asimov')
+      .collection('bookings')
+      .findOne({ changeCode: code });
+    console.log(result);
+
+    if (result) {
+      res.json(result);
+      res.status(200).end();
+    } else {
+      res.statusMessage = 'not found';
+      res.status(409).end();
+    }
+  }
+
+  getBooking();
 });
-
-// app.get('/api/change/:code', (req, res) => {
-//   const { code } = req.params;
-//   getFile(DATA_FILE)
-//     .then((data) => {
-//       const bookings = JSON.parse(data);
-//       const result = bookings.filter((item) => item.changeCode !== code);
-
-//       console.log(result);
-//       putFile(result);
-//       res.statusMessage = 'deleted';
-//       res.status(200).end();
-//     })
-//     .catch((err) => console.error(err));
-// });
 
 app.get('/api/unbook/:code', (req, res) => {
+  async function deleteBooking(data) {
+    const client = new MongoClient(uri);
+
+    try {
+      await client.connect();
+      await deleteByCode(client, data);
+    } finally {
+      await client.close();
+    }
+  }
+
+  async function deleteByCode(client, changeCode) {
+    const result = await client
+      .db('asimov')
+      .collection('bookings')
+      .deleteOne({ changeCode });
+    console.log(`${result.deletedCount} document(s) was/were deleted.`);
+  }
+
   const { code } = req.params;
-  getFile(DATA_FILE)
-    .then((data) => {
-      const bookings = JSON.parse(data);
-      const result = bookings.filter((item) => item.changeCode !== code);
 
-      console.log(result);
-      putFile(result);
-      res.statusMessage = 'deleted';
-      res.status(200).end();
-    })
-    .catch((err) => console.error(err));
+  deleteBooking(code);
+
+  res.statusMessage = 'deleted';
+  res.status(200).end();
 });
 
 app.get('/api/bookings', (req, res) => {
-  getFile(DATA_FILE)
-    .then((data) => {
-      const bookings = JSON.parse(data);
-      res.json(
-        bookings.map((item) => {
-          const obj = { date: item.date, time: item.time };
-          return obj;
-        })
-      );
-    })
-    .catch((err) => console.error(err));
-});
+  async function getAll() {
+    const client = new MongoClient(uri);
 
-// app.get('/api/rebook/:code', (req, res) => {
-//   const { code } = req.params;
-//   getFile(DATA_FILE)
-//     .then((data) => {
-//       const bookings = JSON.parse(data);
-//       const result = bookings.filter((item) => item.changeCode !== code);
+    try {
+      await client.connect();
+      await getBookings(client);
+    } finally {
+      await client.close();
+    }
+  }
 
-//       console.log(result);
-//       putFile(result);
-//       res.statusMessage = 'deleted';
-//       res.status(200).end();
-//     })
-//     .catch((err) => console.error(err));
-// });
+  async function getBookings(client) {
+    const cursor = await client.db('asimov').collection('bookings').find({});
+    const results = await cursor.toArray();
+    console.log(results);
 
-app.get('/api/bookings', (req, res) => {
-  getFile(DATA_FILE)
-    .then((data) => {
-      const bookings = JSON.parse(data);
-      res.json(
-        bookings.map((item) => {
-          const obj = { date: item.date, time: item.time };
-          return obj;
-        })
-      );
-    })
-    .catch((err) => console.error(err));
+    res.json(
+      results.map((item) => {
+        const obj = { date: item.date, time: item.time };
+        return obj;
+      })
+    );
+  }
+
+  getAll();
 });
 
 app.post('/api/book', express.json({ type: '*/*' }), (req, res) => {
-  getFile(DATA_FILE).then((data) => {
-    const bookings = JSON.parse(data);
-    // const change = bookings.find((item) => item.changeCode === req.body.changeCode);
+  async function update(data) {
+    const client = new MongoClient(uri);
 
-    if (
-      bookings.find((item) => item.clientEmail === req.body.clientEmail) &&
-      !bookings.find((item) => item.changeCode === req.body.changeCode)
-    ) {
-      res.statusMessage =
-        'You already have a scheduled appointment, more would be too much.';
-      res.status(409).end();
-
-      return;
-    }
-    let arr = [];
-
-    if (bookings.find((item) => item.changeCode === req.body.changeCode)) {
-      arr = bookings.map((item) => {
-        if (item.changeCode === req.body.changeCode) {
-          return { ...item, date: req.body.date, time: req.body.time };
-        } else {
-          return item;
-        }
+    try {
+      await client.connect();
+      await updateByCode(client, req.body.changeCode, {
+        date: req.body.date,
+        time: req.body.time,
       });
-      console.log('changed');
-    } else {
-      arr = [...bookings];
-      arr.push(req.body);
+    } finally {
+      await client.close();
     }
+  }
 
-    console.log(arr);
-    putFile(arr);
+  async function updateByCode(client, changeCode, updatedListing) {
+    const result = await client
+      .db('asimov')
+      .collection('bookings')
+      .updateOne({ changeCode: changeCode }, { $set: updatedListing });
 
-    res.statusMessage = `Your appointment was scheduled to ${
-      req.body.date
-    } at ${req.body.time.slice(
-      0,
-      5
-    )}. You will have just one hour so be prepared! Use this code ${
-      req.body.changeCode
-    } to make any changes to your reservation, but better don't.`;
-    res.status(200).end();
-  });
+    if (result.modifiedCount === 0) {
+      async function getBooking() {
+        const client = new MongoClient(uri);
+
+        try {
+          await client.connect();
+          await getByEmail(client);
+        } finally {
+          await client.close();
+        }
+      }
+
+      async function getByEmail(client) {
+        const result = await client
+          .db('asimov')
+          .collection('bookings')
+          .findOne({ clientEmail: req.body.clientEmail });
+        console.log(result);
+
+        if (result) {
+          res.statusMessage = 'not added';
+          res.status(409).end();
+        } else {
+          async function add(data) {
+            const client = new MongoClient(uri);
+
+            try {
+              await client.connect();
+              await createBooking(client, data);
+            } finally {
+              await client.close();
+            }
+          }
+
+          async function createBooking(client, newBooking) {
+            const result = await client
+              .db('asimov')
+              .collection('bookings')
+              .insertOne(newBooking);
+            console.log(
+              `New booking created with the following id: ${result.insertedId}`
+            );
+          }
+
+          add(req.body);
+
+          res.statusMessage = 'added';
+          res.status(200).end();
+        }
+      }
+      getBooking();
+    }
+  }
+  update();
 });
 
 app.listen(3100, () => {

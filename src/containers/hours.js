@@ -10,22 +10,24 @@ export default function HoursContainer({
   setFormMessage,
   mode,
 }) {
+  const ckickHandler = (item) => {
+    setActiveTime(item);
+    setShowForm(true);
+    setShowTimes(false);
+    setFormMessage(
+      mode === 'add'
+        ? 'Enter your details and press Book'
+        : 'Press Change to finish changing your booking'
+    );
+  };
+
   return (
     <Hours>
       {times.map((item, ind) => (
         <Hours.Item
           key={ind}
           className={item === activeTime ? 'active' : 'inactive'}
-          onClick={() => {
-            setActiveTime(item);
-            setShowForm(true);
-            setShowTimes(false);
-            setFormMessage(
-              mode === 'add'
-                ? 'Enter your details and press Book'
-                : 'Press Change to finish changing your booking'
-            );
-          }}
+          onClick={() => ckickHandler(item)}
         >
           {item}
         </Hours.Item>

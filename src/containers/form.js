@@ -10,11 +10,9 @@ export default function FormContainer({
   setActiveTime,
   setShowForm,
   setShowTimes,
-  setInfo,
   setBookings,
   checkFullDates,
   currentBooking,
-  formMessage,
   setFormMessage,
   mode,
 }) {
@@ -35,20 +33,16 @@ export default function FormContainer({
       return;
     }
 
-    // const id = makeCode(9);
     const bookDate = formatDate(date);
     const changeCode = mode === 'add' ? makeCode(7) : currentBooking.changeCode;
 
     const newBooking = {
-      // id,
       date: bookDate,
       time,
       changeCode,
       clientName,
       clientEmail,
     };
-
-    console.log(newBooking);
 
     const options = {
       method: 'POST',
@@ -62,8 +56,22 @@ export default function FormContainer({
     (async () => {
       const rawResponse = await fetch(`${API}${API_BOOK}`, options);
 
-      setInfo(rawResponse.statusText);
-      setFormMessage(rawResponse.statusText);
+      if (rawResponse.status === 200) {
+        setFormMessage(
+          `Your appointment was scheduled to ${
+            newBooking.date
+          } at ${newBooking.time.slice(
+            0,
+            5
+          )}. You will have just one hour so be prepared! Use this code ${
+            newBooking.changeCode
+          } to make any changes to your reservation, but better don't.`
+        );
+      } else if (rawResponse.status === 409) {
+        setFormMessage(
+          'You already have a scheduled appointment, more would be too much.'
+        );
+      }
 
       setActiveTime('');
       setShowForm(false);
@@ -89,14 +97,14 @@ export default function FormContainer({
         type="text"
         onChange={(e) => setClientName(e.target.value)}
         disabled={mode === 'change'}
-        value={currentBooking.clientName}
+        value={clientName}
       />
       <Form.Input
         placeholder="your email"
         type="email"
         onChange={(e) => setClientEmail(e.target.value)}
         disabled={mode === 'change'}
-        value={currentBooking.clientEmail}
+        value={clientEmail}
       />
       <Form.Button
         onClick={() => submitHandle()}

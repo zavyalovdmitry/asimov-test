@@ -11,7 +11,6 @@ export const Caption = styled.h1`
   text-align: center;
   margin: 10px;
   padding: 5px;
-
   font-family: PaintDrops, Helvetica, sans-serif;
   color: #a6000b;
   font-size: 2.5rem;

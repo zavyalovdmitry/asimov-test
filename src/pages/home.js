@@ -6,9 +6,8 @@ import {
   FormContainer,
   FormModifyContainer,
   HoursContainer,
-  InfoContainer,
 } from '../containers';
-import { TIMES_INIT, API, API_BOOKINGS } from '../constants';
+import { TIMES_INIT, API, API_BOOKINGS, BLANK_DATA } from '../constants';
 
 function Home() {
   const [date, setDate] = useState(new Date());
@@ -17,16 +16,9 @@ function Home() {
   const [bookings, setBookings] = useState([]);
   const [showTimes, setShowTimes] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [info, setInfo] = useState('');
   const [disabledDates, setDisabledDates] = useState([]);
   const [mode, setMode] = useState('');
-  const [currentBooking, setCurrentBooking] = useState({
-    date: '',
-    time: '',
-    changeCode: '',
-    clientName: '',
-    clientEmail: '',
-  });
+  const [currentBooking, setCurrentBooking] = useState(BLANK_DATA);
   const [formMessage, setFormMessage] = useState('');
 
   useEffect(() => {
@@ -57,16 +49,13 @@ function Home() {
   return (
     <>
       <HeaderContainer />
-      {/* <p>Still don't have a booking? book now</p> */}
       <CalendarContainer
         bookings={bookings}
         date={date}
         setDate={setDate}
-        times={times}
         setTimes={setTimes}
         setActiveTime={setActiveTime}
         setShowTimes={setShowTimes}
-        setInfo={setInfo}
         disabledDates={disabledDates}
         setShowForm={setShowForm}
         formMessage={formMessage}
@@ -93,22 +82,16 @@ function Home() {
           setActiveTime={setActiveTime}
           setShowForm={setShowForm}
           setShowTimes={setShowTimes}
-          setInfo={setInfo}
           setBookings={setBookings}
           checkFullDates={checkFullDates}
           currentBooking={currentBooking}
-          setCurrentBooking={setCurrentBooking}
           mode={mode}
           setFormMessage={setFormMessage}
-          formMessage={formMessage}
         />
       ) : null}
-      {/* {info ? <InfoContainer info={info} /> : null} */}
       {mode === '' ? (
         <FormModifyContainer
-          currentBooking={currentBooking}
           setCurrentBooking={setCurrentBooking}
-          mode={mode}
           setMode={setMode}
           setFormMessage={setFormMessage}
         />
