@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import React, { useState, useEffect } from 'react';
 import { Form } from '../components';
 import { formatDate, makeCode } from '../utils';
@@ -15,6 +16,7 @@ export default function FormContainer({
   currentBooking,
   setFormMessage,
   mode,
+  setMode,
 }) {
   const [clientName, setClientName] = useState('');
   const [clientEmail, setClientEmail] = useState('');
@@ -118,6 +120,7 @@ export default function FormContainer({
         onClick={() => {
           setShowForm(false);
           setShowTimes(true);
+          mode === 'change' ? setMode('add') : null;
         }}
       >
         Cancel

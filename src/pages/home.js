@@ -91,6 +91,7 @@ function Home() {
               currentBooking={currentBooking}
               mode={mode}
               setFormMessage={setFormMessage}
+              setMode={setMode}
             />
           ) : null}
           {mode === '' ? (

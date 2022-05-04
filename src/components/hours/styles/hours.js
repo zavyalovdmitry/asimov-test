@@ -5,7 +5,6 @@ export const Container = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  margin-bottom: 50px;
 `;
 
 export const Item = styled.p`

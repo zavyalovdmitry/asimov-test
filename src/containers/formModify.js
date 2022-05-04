@@ -85,11 +85,11 @@ export default function FormModifyContainer({
         placeholder="your code"
         type="text"
         onChange={(e) => setClientCode(e.target.value)}
-        disabled={bookingFound}
+        disabled={bookingFound || message === 'Please wait...'}
       />
       <Form.Button
         onClick={() => searchHandle()}
-        disabled={!clientCode || bookingFound}
+        disabled={!clientCode || bookingFound || message === 'Please wait...'}
       >
         Modify booking
       </Form.Button>

@@ -27,13 +27,13 @@ export const Button = styled.button`
   font-family: Hahmlet, Helvetica, sans-serif;
   line-height: 1.25em;
   cursor: pointer;
+  background: white;
 
-  &:hover {
-    opacity: 0.7;
+  &:enabled:hover {
+    background-color: #e6e6e6;
+  }
 
-    &[disabled] {
-      opacity: 1;
-      cursor: default;
-    }
+  &:disabled {
+    cursor: default;
   }
 `;
