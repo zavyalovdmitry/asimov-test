@@ -62,6 +62,7 @@ export default function FormContainer({
       const rawResponse = await fetch(`${API}${API_BOOK}`, options);
 
       if (rawResponse.status === 200) {
+        setMode(mode === 'change' ? 'add' : mode);
         setFormMessage(
           `Your appointment was scheduled to ${
             newBooking.date
