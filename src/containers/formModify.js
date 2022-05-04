@@ -32,7 +32,7 @@ export default function FormModifyContainer({
         if (data) {
           setCurrentBooking(data);
           setBookingFound(true);
-          setMessage('You can change date/time of your booking or unbook it.');
+          setMessage('You can change date/time of your booking or cancel it.');
         } else {
           console.log('not found');
           setMessage(
@@ -52,7 +52,7 @@ export default function FormModifyContainer({
   }, [bookingFound]);
 
   const unbookHandle = () => {
-    if (window.confirm('Are you sure you want to unbook your dance?')) {
+    if (window.confirm('Are you sure you want to cancel your dance?')) {
       fetch(`${API}${API_UNBOOK}/${clientCode}`).then((response) => {
         if (response.status === 409) {
           return;
@@ -68,7 +68,7 @@ export default function FormModifyContainer({
         });
       });
 
-      alert('You have succesfully unbooked your dance.');
+      alert('You have succesfully canceled your dance.');
     }
   };
 

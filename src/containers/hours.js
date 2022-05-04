@@ -16,8 +16,8 @@ export default function HoursContainer({
     setShowTimes(false);
     setFormMessage(
       mode === 'add'
-        ? 'Enter your details and press Book'
-        : 'Press Change to finish changing your booking'
+        ? 'Enter your details and press Book to finish your reservation.'
+        : 'Press Change to save your new reservation details.'
     );
   };
 
