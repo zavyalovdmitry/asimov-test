@@ -10,26 +10,62 @@ const PORT = process.env.PORT || 8081;
 
 app.use(cors());
 
-app.get('/api/bookings/:code', (req, res) => {
+async function getBookings(client) {
+  const cursor = await client.db('asimov').collection('bookings').find({});
+  const results = await cursor.toArray();
+  console.log(results.length, ' bookings found');
+  return results;
+}
+
+async function getByCode(client, code) {
+  const result = await client
+    .db('asimov')
+    .collection('bookings')
+    .findOne({ changeCode: code });
+  console.log(result);
+  return result;
+}
+
+async function deleteByCode(client, code) {
+  const result = await client
+    .db('asimov')
+    .collection('bookings')
+    .deleteOne({ changeCode: code });
+  console.log(`${result.deletedCount} document(s) was/were deleted.`);
+}
+
+async function updateByCode(client, changeCode, updatedListing) {
+  const result = await client
+    .db('asimov')
+    .collection('bookings')
+    .updateOne({ changeCode: changeCode }, { $set: updatedListing });
+  return result;
+}
+
+async function getByEmail(client, clientEmail) {
+  const result = await client
+    .db('asimov')
+    .collection('bookings')
+    .findOne({ clientEmail: clientEmail });
+  return result;
+}
+
+async function createBooking(client, newBooking) {
+  const result = await client
+    .db('asimov')
+    .collection('bookings')
+    .insertOne(newBooking);
+  console.log(
+    `New booking created with the following id: ${result.insertedId}`
+  );
+}
+app.get('/api/bookings/:code', async (req, res) => {
   const { code } = req.params;
+  const client = new MongoClient(uri);
 
-  async function getBooking() {
-    const client = new MongoClient(uri);
-
-    try {
-      await client.connect();
-      await getByCode(client);
-    } finally {
-      await client.close();
-    }
-  }
-
-  async function getByCode(client) {
-    const result = await client
-      .db('asimov')
-      .collection('bookings')
-      .findOne({ changeCode: code });
-    console.log(result);
+  try {
+    await client.connect();
+    const result = await getByCode(client, code);
 
     if (result) {
       res.json(result);
@@ -38,55 +74,32 @@ app.get('/api/bookings/:code', (req, res) => {
       res.statusMessage = 'not found';
       res.status(409).end();
     }
+  } finally {
+    await client.close();
   }
-
-  getBooking();
 });
 
-app.get('/api/unbook/:code', (req, res) => {
-  async function deleteBooking(data) {
-    const client = new MongoClient(uri);
-
-    try {
-      await client.connect();
-      await deleteByCode(client, data);
-    } finally {
-      await client.close();
-    }
-  }
-
-  async function deleteByCode(client, changeCode) {
-    const result = await client
-      .db('asimov')
-      .collection('bookings')
-      .deleteOne({ changeCode });
-    console.log(`${result.deletedCount} document(s) was/were deleted.`);
-  }
-
+app.get('/api/unbook/:code', async (req, res) => {
   const { code } = req.params;
+  const client = new MongoClient(uri);
 
-  deleteBooking(code);
+  try {
+    await client.connect();
+    await deleteByCode(client, code);
 
-  res.statusMessage = 'deleted';
-  res.status(200).end();
+    res.statusMessage = 'deleted';
+    res.status(200).end();
+  } finally {
+    await client.close();
+  }
 });
 
-app.get('/api/bookings', (req, res) => {
-  async function getAll() {
-    const client = new MongoClient(uri);
+app.get('/api/bookings', async (req, res) => {
+  const client = new MongoClient(uri);
 
-    try {
-      await client.connect();
-      await getBookings(client);
-    } finally {
-      await client.close();
-    }
-  }
-
-  async function getBookings(client) {
-    const cursor = await client.db('asimov').collection('bookings').find({});
-    const results = await cursor.toArray();
-    console.log(results);
+  try {
+    await client.connect();
+    const results = await getBookings(client);
 
     res.json(
       results.map((item) => {
@@ -94,89 +107,55 @@ app.get('/api/bookings', (req, res) => {
         return obj;
       })
     );
+  } finally {
+    await client.close();
   }
-
-  getAll();
 });
 
-app.post('/api/book', express.json({ type: '*/*' }), (req, res) => {
-  async function update(data) {
-    const client = new MongoClient(uri);
+app.post('/api/book', express.json({ type: '*/*' }), async (req, res) => {
+  const client = new MongoClient(uri);
+  const { changeCode, date, time, clientEmail } = req.body;
 
-    try {
-      await client.connect();
-      await updateByCode(client, req.body.changeCode, {
-        date: req.body.date,
-        time: req.body.time,
-      });
-    } finally {
-      await client.close();
-    }
-  }
-
-  async function updateByCode(client, changeCode, updatedListing) {
-    const result = await client
-      .db('asimov')
-      .collection('bookings')
-      .updateOne({ changeCode: changeCode }, { $set: updatedListing });
+  try {
+    await client.connect();
+    const result = await updateByCode(client, changeCode, {
+      date: date,
+      time: time,
+    });
 
     if (result.modifiedCount === 0) {
-      async function getBooking() {
-        const client = new MongoClient(uri);
+      const client = new MongoClient(uri);
 
-        try {
-          await client.connect();
-          await getByEmail(client);
-        } finally {
-          await client.close();
-        }
-      }
-
-      async function getByEmail(client) {
-        const result = await client
-          .db('asimov')
-          .collection('bookings')
-          .findOne({ clientEmail: req.body.clientEmail });
-        console.log(result);
+      try {
+        await client.connect();
+        const result = await getByEmail(client, clientEmail);
 
         if (result) {
           res.statusMessage = 'not added';
           res.status(409).end();
         } else {
-          async function add(data) {
-            const client = new MongoClient(uri);
+          const client = new MongoClient(uri);
 
-            try {
-              await client.connect();
-              await createBooking(client, data);
-            } finally {
-              await client.close();
-            }
+          try {
+            await client.connect();
+            await createBooking(client, req.body);
+          } finally {
+            await client.close();
           }
-
-          async function createBooking(client, newBooking) {
-            const result = await client
-              .db('asimov')
-              .collection('bookings')
-              .insertOne(newBooking);
-            console.log(
-              `New booking created with the following id: ${result.insertedId}`
-            );
-          }
-
-          add(req.body);
 
           res.statusMessage = 'added';
           res.status(200).end();
         }
+      } finally {
+        await client.close();
       }
-      getBooking();
     } else {
       res.statusMessage = 'updated';
       res.status(200).end();
     }
+  } finally {
+    await client.close();
   }
-  update();
 });
 
 app.all('*', (req, res) => {
